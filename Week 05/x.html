@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>proxy</title>
+</head>
+
+<body>
+  <script>
+    let object = {
+      a: 1,
+      b: 2
+    }
+    let po = new Proxy(object, {
+      set(obj, prop, val) {
+        console.log('set',obj,prop, val)
+        console.log('obj===object',obj===object)
+        console.log('prop',prop)
+        console.log('val',val)
+      },
+      get(obj, prop, val) {
+        console.log('get',obj,prop, val)
+        console.log('obj===object',obj===object)
+        console.log('prop',prop)
+        console.log('val===po',val===po)
+      }
+    })
+    po.c=3;
+    po.c;
+  </script>
+</body>
+
+</html>

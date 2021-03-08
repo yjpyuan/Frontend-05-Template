@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>proxy</title>
+</head>
+
+<body>
+  <input type="range" id="r" min="1" max="255" />
+  <input type="range" id="g" min="1" max="255" />
+  <input type="range" id="b" min="1" max="255" />
+  <div style="width: 100px; height: 100px;" id="color">
+
+  </div>
+  <script>
+    let callbocks = new Map()
+    let reactivties = new Map()
+    let usedReactivties = []
+    let object = {
+      a: {
+        b: 3
+      },
+      b: 2,
+      r: 1,
+      g: 2,
+      b: 3
+    }
+    let po = reactive(object);
+    effect(() => {
+      document.getElementById('r').value = po.r;
+      //这样也可以，不用那么多effect
+      // document.getElementById('b').value=po.b;
+      //  document.getElementById('g').value=po.g;
+      console.log(po.r)
+    })
+    effect(() => {
+      document.getElementById('g').value = po.g;
+      console.log(po.g)
+    })
+    effect(() => {
+      document.getElementById('b').value = po.b;
+      console.log(po.b)
+    })
+    document.getElementById('r').addEventListener('input', event => po.r = event.target.value)
+    document.getElementById('g').addEventListener('input', event => po.g = event.target.value)
+    document.getElementById('b').addEventListener('input', event => po.b = event.target.value)
+    effect(() => {
+      document.getElementById('color').style.background = `rgb(${po.r},${po.g},${po.b})`
+    })
+
+    function effect(callbock) {
+      // callbocks.push(callbock)
+      usedReactivties = []
+      callbock()
+      console.log(usedReactivties)
+      for (let reactivity of usedReactivties) {
+        if (!callbocks.has(reactivity[0])) {
+          callbocks.set(reactivity[0], new Map());
+        }
+        if (!callbocks.get(reactivity[0]).has(reactivity[1])) {
+          callbocks.get(reactivity[0]).set(reactivity[1], [])
+        }
+        // 将callbock写入到最里层里，就是上面绘制的[]
+        callbocks.get(reactivity[0]).get(reactivity[1]).push(callbock)
+      }
+    }
+
+    function reactive(object) {
+      if (reactivties.has(object))
+        return reactivties.get(object)
+
+      let proxy = new Proxy(object, {
+        set: (obj, prop, val) => {
+          // console.log(obj, prop, val);
+          obj[prop] = val
+          if (callbocks.get(obj))
+            if (callbocks.get(obj).get(prop))
+              for (let callbock of callbocks.get(obj).get(prop)) {
+                callbock()
+              }
+          return obj[prop]
+        },
+        get: (obj, prop) => {
+          // console.log(obj, prop, val)
+          usedReactivties.push([obj, prop])
+          if (typeof obj[prop] === 'object')
+            return reactive(obj[prop])
+          return obj[prop]
+
+        }
+      })
+      reactivties.set(object, proxy)
+      return proxy
+    }
+    // console.log(po.x = 3);
+    // console.log(object);
+  </script>
+</body>
+
+</html>
