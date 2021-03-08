@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>构建四则运算的抽象语法树AST</title>
+</head>
+
+<body>
+
+</body>
+<script>
+  let regexp = /([0-9\.]+)|([ \t]+)|([\r\n]+)|(\*)|(\/)|(\-)|(\+)/g
+  let distionary = ["Number", "Whitespace", "LineTerminator", "*", "/", "-", "+"]
+
+  function* tokenSize(source) {
+    var result = null;
+    var lastIndex = 0;
+    while (true) {
+      lestIndex = regexp.lastIndex;
+      result = regexp.exec(source);
+      if (!result) break;
+      if (regexp.lestIndex - lastIndex > result[0].length) {
+        console.log('error')
+        break;
+      }
+      let token = {
+        type: null,
+        value: null
+
+      }
+      for (var i = 1; i <= distionary.length; i++) {
+        if (result[i])
+          token.type = distionary[i - 1]
+      }
+      token.value = result[0]
+      yield token;
+    }
+    yield {
+      type: "EOF"
+    }
+  }
+  for (let token of tokenSize('1024 + 10 * 25')) {
+    console.log(token)
+  }
+</script>
+
+</html>
