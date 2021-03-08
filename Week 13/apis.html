@@ -1,0 +1,17 @@
+<script>
+  let names = Object.getOwnPropertyNames(window);
+
+  function filterOut(names, props) {
+    let set = new Set();
+    props.forEach(o => set.add(o));
+    return names.filter(e => !set.has(e));
+  }
+
+  // ECMA 262
+  {
+    let js=new Set();
+    let objects=[]
+  }
+
+  console.log(names)
+</script>
