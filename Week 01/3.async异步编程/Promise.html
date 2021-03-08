@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Promise实现</title>
+</head>
+<style>
+  div {
+    background-color: grey;
+    border-radius: 50%;
+    display: inline-block;
+    width: 100px;
+    height: 100px;
+
+  }
+
+  .green.light {
+    background-color: green;
+  }
+
+  .red.light {
+    background-color: red;
+  }
+
+  .yellow.light {
+    background-color: yellow;
+  }
+</style>
+
+<body>
+  <div class="green"></div>
+  <div class="yellow"></div>
+  <div class="red"></div>
+
+</body>
+<script>
+  function green() {
+    let light = document.getElementsByTagName('div')
+    for (var i = 0; i < 3; i++) {
+      light[i].classList.remove('light')
+      document.getElementsByClassName('green')[0].classList.add('light')
+    }
+  }
+
+  function red() {
+    let light = document.getElementsByTagName('div')
+    for (var i = 0; i < 3; i++) {
+      light[i].classList.remove('light')
+      document.getElementsByClassName('red')[0].classList.add('light')
+    }
+  }
+
+  function yellow() {
+    let light = document.getElementsByTagName('div')
+    for (var i = 0; i < 3; i++) {
+      light[i].classList.remove('light')
+      document.getElementsByClassName('yellow')[0].classList.add('light')
+    }
+  }
+
+  function sleep(t) {
+    return new Promise((resolve, reject) => {
+      setTimeout(resolve, t)
+    })
+  }
+
+  function go() {
+    green()
+    sleep(1000)
+      .then(() => {
+        yellow()
+        return sleep(200);
+      })
+      .then(() => {
+        red()
+        return sleep(500);
+      })
+      .then(go)
+  }
+  go()
+</script>
+
+</html>

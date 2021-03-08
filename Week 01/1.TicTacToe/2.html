@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TicTacToe</title>
+</head>
+<style>
+  .cell {
+    width: 100px;
+    height: 100px;
+    background-color: green;
+    border: 1px solid white;
+    vertical-align: middle;
+    line-height: 100px;
+    font-size: 50px;
+    text-align: center;
+    display: inline-block;
+  }
+</style>
+
+<body>
+  <div id="board"></div>
+  <script>
+    //定义一个二维数组，2 表示× 1表示O 0表示没有内容
+    let pattern = [
+      [2, 0, 0],
+      [0, 1, 0],
+      [0, 0, 0]
+    ]
+    // 初始化color
+    let color = 1;
+    //定义show方法展示棋盘
+    function show() {
+      // console.log(pattern.length)
+      let board = document.getElementById('board');
+      board.innerHTML = ''
+      for (let i = 0; i < pattern.length; i++) {
+        for (let j = 0; j < pattern[i].length; j++) {
+          let cell = document.createElement('div');
+          cell.classList.add('cell')
+          cell.innerText =
+            pattern[i][j] == '2' ? 'x' :
+            pattern[i][j] == '1' ? 'o' :
+            '';
+          cell.addEventListener('click', () => move(i, j));
+          board.appendChild(cell)
+        }
+        board.appendChild(document.createElement('br'))
+      }
+    }
+
+
+    //添加按钮事件
+    function move(x, y) {
+      pattern[x][y] = color;
+      if (check()) {
+        console.log(color == 2 ? "x is winner" : "o is winner")
+        // alert()
+      }
+      color = 3 - color;
+      show()
+    }
+    //判断是否获胜
+    function check() {
+      //检查每一行
+      for (let i = 0; i < pattern.length; i++) {
+        let win = true;
+        for (let j = 0; j < pattern[i].length; j++) {
+          if (pattern[i][j] !== color) {
+            win = false
+          }
+        }
+        if (win) {
+          return true
+        }
+      }
+      // 检查每一列
+      for (let i = 0; i < pattern.length; i++) {
+        let win = true;
+        for (let j = 0; j < pattern[i].length; j++) {
+          if (pattern[j][i] !== color) {
+            win = false
+          }
+        }
+        if (win) {
+          return true
+        }
+      }
+      // 检查正斜向
+      {
+        let win = true;
+        for (let i = 0; i < 3; i++) {
+          if (pattern[i][i] !== color) {
+            win = false
+          }
+        }
+        if (win) {
+          return true
+        }
+      }
+      // 检查反斜向
+      {
+        let win = true;
+        for (let i = 0; i < 3; i++) {
+          if (pattern[i][2-i] !== color) {
+            win = false
+          }
+        }
+        if (win) {
+          return true
+        }
+      }
+      return false
+    }
+    show()
+  </script>
+</body>
+
+</html>

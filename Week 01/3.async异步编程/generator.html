@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>async实现</title>
+</head>
+<style>
+  div {
+    background-color: grey;
+    border-radius: 50%;
+    display: inline-block;
+    width: 100px;
+    height: 100px;
+
+  }
+
+  .green.light {
+    background-color: green;
+  }
+
+  .red.light {
+    background-color: red;
+  }
+
+  .yellow.light {
+    background-color: yellow;
+  }
+</style>
+
+<body>
+  <div class="green"></div>
+  <div class="yellow"></div>
+  <div class="red"></div>
+  <button name="next">next</button>
+
+</body>
+<script>
+  function green() {
+    let light = document.getElementsByTagName('div')
+    for (var i = 0; i < 3; i++) {
+      light[i].classList.remove('light')
+      document.getElementsByClassName('green')[0].classList.add('light')
+    }
+  }
+
+  function red() {
+    let light = document.getElementsByTagName('div')
+    for (var i = 0; i < 3; i++) {
+      light[i].classList.remove('light')
+      document.getElementsByClassName('red')[0].classList.add('light')
+    }
+  }
+
+  function yellow() {
+    let light = document.getElementsByTagName('div')
+    for (var i = 0; i < 3; i++) {
+      light[i].classList.remove('light')
+      document.getElementsByClassName('yellow')[0].classList.add('light')
+    }
+  }
+
+  function sleep(t) {
+    return new Promise((resolve, reject) => {
+      setTimeout(resolve, t)
+    })
+  }
+
+  function happen(element, eventName) {
+    return new Promise((resolve, reject) => {
+      element.addEventListener(eventName, resolve, {
+        once: true
+      })
+    })
+  }
+
+function* go(){
+  while(true){
+    green()
+    yield sleep(1000);
+    yellow();
+    yield sleep(200);
+    red()
+    yield sleep(500);
+  }
+}
+
+function run(iterator){
+  let {value,done}=iterator.next()
+  if(done){
+    return;
+  }
+  if(value instanceof Promise){
+    value.then(()=>{
+      run(iterator)
+    })
+  }
+}
+
+function co(generator){
+  return function(){
+    return run(generator())
+  }
+}
+  go=co(go)
+
+ async function* counter(){
+  let i=0;
+  while(true){
+    await sleep(1000)
+    yield i++;
+  }
+ }
+ (async function(){
+   for await(let v of counter()){
+     console.log(v)
+   }
+ })()
+</script>
+
+</html>
